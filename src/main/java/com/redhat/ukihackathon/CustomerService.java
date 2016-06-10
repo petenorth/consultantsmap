@@ -71,7 +71,7 @@ public class CustomerService {
      */
     @GET
     @Path("/locations/{id}/")
-    @Produces("application/xml")
+    @Produces("application/json")
     @ApiOperation(value = "Find Customer by ID", notes = "More notes about this method", response = Customer.class)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Invalid ID supplied"),
@@ -110,7 +110,7 @@ public class CustomerService {
      */
     @POST
     @Path("/consultantlocations/")
-    @Consumes({"application/xml", "application/json"})
+    @Consumes({"application/json"})
     @ApiOperation(value = "Add a new consultant locations")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "Invalid ID supplied"),})
     public Response addConsultantLocations(@ApiParam(value = "Customer object that needs to be updated", required = true)

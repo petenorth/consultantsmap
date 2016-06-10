@@ -2,6 +2,8 @@ package com.redhat.ukihackathon;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 public class ConsultantLocations {
 	
 	List<ConsultantLocation> locations;
