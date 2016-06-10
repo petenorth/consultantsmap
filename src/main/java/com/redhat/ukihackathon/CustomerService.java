@@ -134,10 +134,10 @@ public class CustomerService {
     final void init() {
     	ConsultantLocation consultantLocation1 = new ConsultantLocation();
     	consultantLocation1.setName("Matt Roberts");
-    	consultantLocation1.setLocation("at home");
+    	consultantLocation1.setLocation("SW1A 2NH");
     	ConsultantLocation consultantLocation2 = new ConsultantLocation();
     	consultantLocation2.setName("Paulo Menon");
-    	consultantLocation2.setLocation("cafeteria");
+    	consultantLocation2.setLocation("EC2M 7LS");
     	consultantLocations.getLocations().add(consultantLocation1);
     	consultantLocations.getLocations().add(consultantLocation2);
 
