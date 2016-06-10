@@ -132,6 +132,16 @@ public class CustomerService {
      * for testing purposes.
      */
     final void init() {
+    	
+    	ConsultantLocations consultantLocations = new ConsultantLocations();
+    	ConsultantLocation consultantLocation1 = new ConsultantLocation();
+    	consultantLocation1.setName("Matt Roberts");
+    	consultantLocation1.setLocation("at home");
+    	ConsultantLocation consultantLocation2 = new ConsultantLocation();
+    	consultantLocation2.setName("Paulo Menon");
+    	consultantLocation2.setLocation("cafeteria");
+    	consultantLocations.getLocations().add(consultantLocation1);
+    	consultantLocations.getLocations().add(consultantLocation2);
 
     }
 
