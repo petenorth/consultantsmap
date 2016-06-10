@@ -46,15 +46,13 @@ import org.slf4j.LoggerFactory;
  * this class will be hosted in 'http://localhost:8181/cxf/crm/customerservice'.  An @Path("/customers") annotation on
  * one of the methods would result in 'http://localhost:8181/cxf/crm/customerservice/customers'.
  */
-@Path("/customerservice/")
-@Api(value = "/customerservice", description = "Operations about customerservice")
+@Path("/consultantlocations/")
+@Api(value = "/consultantlocations", description = "Operations about consultant locations")
 public class CustomerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerService.class);
 
-    long currentId = 123;
-    Map<Long, Customer> customers = new HashMap<Long, Customer>();
-    Map<Long, Order> orders = new HashMap<Long, Order>();
+    private ConsultantLocations consultantLocations = new ConsultantLocations();
     private MessageContext jaxrsContext;
 
 
@@ -72,18 +70,16 @@ public class CustomerService {
      * customer 123 in XML format.
      */
     @GET
-    @Path("/customers/{id}/")
+    @Path("/locations/{id}/")
     @Produces("application/xml")
     @ApiOperation(value = "Find Customer by ID", notes = "More notes about this method", response = Customer.class)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Invalid ID supplied"),
-            @ApiResponse(code = 204, message = "Customer not found")
+            @ApiResponse(code = 204, message = "location not found")
     })
-    public Customer getCustomer(@ApiParam(value = "ID of Customer to fetch", required = true) @PathParam("id") String id) {
+    public ConsultantLocations getConsultantLocations(@ApiParam(value = "ID of customerlocation to fetch", required = true) @PathParam("id") String id) {
         LOG.info("Invoking getCustomer, Customer id is: {}", id);
-        long idNumber = Long.parseLong(id);
-        Customer c = customers.get(idNumber);
-        return c;
+        return consultantLocations;
     }
 
     /**
@@ -97,28 +93,7 @@ public class CustomerService {
      * Note how this method is using the same @Path value as our next method - the HTTP method used will determine which
      * method is being invoked.
      */
-    @PUT
-    @Path("/customers/")
-    @Consumes({"application/xml", "application/json"})
-    @ApiOperation(value = "Update an existing Customer")
-    @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Invalid ID supplied"),
-            @ApiResponse(code = 204, message = "Customer not found")
-    })
 
-    public Response updateCustomer(@ApiParam(value = "Customer object that needs to be updated", required = true) Customer customer) {
-        LOG.info("Invoking updateCustomer, Customer name is: {}", customer.getName());
-        Customer c = customers.get(customer.getId());
-        Response r;
-        if (c != null) {
-            customers.put(customer.getId(), customer);
-            r = Response.ok().build();
-        } else {
-            r = Response.notModified().build();
-        }
-
-        return r;
-    }
 
     /**
      * Using HTTP POST, we can add a new customer to the system by uploading the XML representation for the customer.
@@ -134,84 +109,30 @@ public class CustomerService {
      * method is being invoked.
      */
     @POST
-    @Path("/customers/")
+    @Path("/consultantlocations/")
     @Consumes({"application/xml", "application/json"})
-    @ApiOperation(value = "Add a new Customer")
+    @ApiOperation(value = "Add a new consultant locations")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "Invalid ID supplied"),})
-    public Response addCustomer(@ApiParam(value = "Customer object that needs to be updated", required = true)
-                                Customer customer) {
-        LOG.info("Invoking addCustomer, Customer name is: {}", customer.getName());
-        customer.setId(++currentId);
-
-        customers.put(customer.getId(), customer);
+    public Response addConsultantLocations(@ApiParam(value = "Customer object that needs to be updated", required = true)
+                                ConsultantLocations consultantLocations) {
+        this.consultantLocations = consultantLocations;
         if (jaxrsContext.getHttpHeaders().getMediaType().getSubtype().equals("json")) {
-            return Response.ok().type("application/json").entity(customer).build();
+            return Response.ok().type("application/json").entity(consultantLocations).build();
         } else {
-            return Response.ok().type("application/xml").entity(customer).build();
+            return Response.ok().type("application/xml").entity(consultantLocations).build();
         }
     }
 
-    /**
-     * This method is mapped to an HTTP DELETE of 'http://localhost:8181/cxf/crm/customerservice/customers/{id}'.  The value for
-     * {id} will be passed to this message as a parameter, using the @PathParam annotation.
-     * <p/>
-     * The method uses the Response class to create the HTTP response: either HTTP Status 200/OK if the customer object was
-     * successfully removed from the local data map or a HTTP Status 304/Not Modified if it failed to remove the object.
-     */
-    @DELETE
-    @Path("/customers/{id}/")
-    @ApiOperation(value = "Delete Customer")
-    @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Invalid ID supplied"),
-            @ApiResponse(code = 204, message = "Customer not found")
-    })
-    public Response deleteCustomer(@ApiParam(value = "ID of Customer to delete", required = true) @PathParam("id") String id) {
-        LOG.info("Invoking deleteCustomer, Customer id is: {}", id);
-        long idNumber = Long.parseLong(id);
-        Customer c = customers.get(idNumber);
 
-        Response r;
-        if (c != null) {
-            r = Response.ok().build();
-            customers.remove(idNumber);
-        } else {
-            r = Response.notModified().build();
-        }
 
-        return r;
-    }
 
-    /**
-     * This method is mapped to an HTTP GET of 'http://localhost:8181/cxf/crm/customerservice/orders/{id}'.  The value for
-     * {id} will be passed to this message as a parameter, using the @PathParam annotation.
-     * <p/>
-     * The method returns an Order object - the class for that object includes a few more JAX-RS annotations, allowing it to
-     * display one of these two outputs, depending on the actual URI path being used:
-     * - display the order information itself in XML format
-     * - display details about a product in the order in XML format in a path relative to the URI defined here
-     */
-    @Path("/orders/{orderId}/")
-    public Order getOrder(@PathParam("orderId") String orderId) {
-        LOG.info("Invoking getOrder, Order id is: {}", orderId);
-        long idNumber = Long.parseLong(orderId);
-        Order c = orders.get(idNumber);
-        return c;
-    }
 
     /**
      * The init method is used by the constructor to insert a Customer and Order object into the local data map
      * for testing purposes.
      */
     final void init() {
-        Customer c = new Customer();
-        c.setName("John");
-        c.setId(123);
-        customers.put(c.getId(), c);
 
-        Order o = new Order();
-        o.setDescription("order 223");
-        o.setId(223);
-        orders.put(o.getId(), o);
     }
 
     @Context
