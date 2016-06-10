@@ -132,8 +132,6 @@ public class CustomerService {
      * for testing purposes.
      */
     final void init() {
-    	
-    	ConsultantLocations consultantLocations = new ConsultantLocations();
     	ConsultantLocation consultantLocation1 = new ConsultantLocation();
     	consultantLocation1.setName("Matt Roberts");
     	consultantLocation1.setLocation("at home");
